@@ -1,40 +1,46 @@
+# GitLab CI configuration for Java Gradle Responsive Website project
+
+# Define stages
 stages:
-  - checkout
   - build
   - test
 
+# Variables
 variables:
-  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"  # Optional, helps cache Gradle dependencies
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"  # Caches Gradle dependencies
 
+# Cache configuration to speed up builds
 cache:
   paths:
     - .gradle/wrapper
     - .gradle/caches
 
-checkout:
-  stage: checkout
-  script:
-    - echo "Checking out code from the repository..."
-    - git clone https://github.com/BaKaLoVes/Java_Gradle_Responsive_Website.git .
-  only:
-    - main  # This ensures the job runs only on the 'main' branch
-
+# Build job
 build:
   stage: build
   script:
-    - echo "Building the project using Gradle..."
-    - ./gradlew clean build  # Adjust this based on your OS if not Windows
+    - echo "Starting the build..."
+    - ./gradlew clean build  # Clean and build the project using Gradle
   only:
-    - main  # Runs only on the 'main' branch
+    - main  # Run this job only on the main branch
+  artifacts:
+    paths:
+      - build/libs/  # Save the build artifacts for later use
 
+# Test job
 test:
   stage: test
   script:
     - echo "Running tests..."
-    - ./gradlew test
+    - ./gradlew test  # Run tests
   only:
-    - main  # Runs only on the 'main' branch
+    - main  # Run this job only on the main branch
+  artifacts:
+    when: always
+    paths:
+      - build/reports/tests/  # Save test reports as artifacts
 
+# Clean up after the pipeline
 after_script:
-  - echo "Cleaning up workspace"
+  - echo "Cleaning up workspace..."
   - rm -rf $CI_PROJECT_DIR
