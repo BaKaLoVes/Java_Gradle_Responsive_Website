@@ -15,10 +15,9 @@ checkout:
   stage: checkout
   script:
     - echo "Checking out code from the repository..."
+    - git clone https://github.com/BaKaLoVes/Java_Gradle_Responsive_Website.git .
   only:
-    - main
-  before_script:
-    - git clone https://github.com/GANWEIJIA/Java_Gradle_Responsive_Website.git .
+    - main  # This ensures the job runs only on the 'main' branch
 
 build:
   stage: build
@@ -26,9 +25,7 @@ build:
     - echo "Building the project using Gradle..."
     - ./gradlew clean build  # Adjust this based on your OS if not Windows
   only:
-    - main
-  when: on_success
-  retry: 2  # Retry the job up to 2 times in case of failure
+    - main  # Runs only on the 'main' branch
 
 test:
   stage: test
@@ -36,11 +33,8 @@ test:
     - echo "Running tests..."
     - ./gradlew test
   only:
-    - main
-  when: on_success
-  retry: 2  # Retry the job up to 2 times in case of failure
+    - main  # Runs only on the 'main' branch
 
 after_script:
   - echo "Cleaning up workspace"
   - rm -rf $CI_PROJECT_DIR
-
